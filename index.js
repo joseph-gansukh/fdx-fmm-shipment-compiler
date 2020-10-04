@@ -1,15 +1,4 @@
 const xlsx = require('xlsx');
-const fs = require('fs');
-
-const reset = () => {
-    const filePath = './files/Compilation.xlsx';
-    fs.unlinkSync(filePath);
-
-    const filePath2 = './files/CMA CGM LITANI 4525 - AVAILABLE.xlsm';
-    fs.unlinkSync(filePath2)
-
-    fs.copyFileSync('./files/CMA CGM LITANI 4525 - AVAILABLE - Copy.xlsm', './files/CMA CGM LITANI 4525 - AVAILABLE.xlsm')
-}
 
 const run = async _ => {
     const fileName = './files/CMA CGM LITANI 4525 - AVAILABLE.xlsm'
@@ -44,10 +33,35 @@ const run = async _ => {
 
 
     const json = xlsx.utils.sheet_to_json(ws)
-    console.log(json)
 
+    // Remove empty rows
+    const cleanData = []
+
+    json.map(el => {
+        if (el["HBL#"]) {
+            delete el['Days past 7']
+            delete el['Initial Storage']
+            delete el['Days past 12']
+            delete el['Additional Storage']
+            delete el['Total Storage']
+            delete el[' TOTAL: ']
+            delete el[' STORAGE ']
+            delete el[' WHSE FEE ']
+            delete el['Shipper Pallets']
+            delete el.Rate
+            delete el.MIN
+            delete el.MAX
+            delete el['FTN Pallets']
+            delete el.__EMPTY
+            delete el.LOCATION
+            cleanData.push(el)
+        }
+    })
+    console.log(cleanData)
+
+    // Write JSON data to compiled spreadsheet
     const newWb = xlsx.utils.book_new();
-    const newWs = xlsx.utils.json_to_sheet(json)
+    const newWs = xlsx.utils.json_to_sheet(cleanData)
 
     xlsx.utils.book_append_sheet(newWb, newWs, "Compiled Data")
     xlsx.writeFile(newWb, "./files/Compilation.xlsx")
@@ -55,4 +69,3 @@ const run = async _ => {
 }
 
 run()
-reset()
