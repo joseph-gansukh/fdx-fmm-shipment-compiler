@@ -1,6 +1,16 @@
 const xlsx = require('xlsx');
+const fs = require('fs');
+
+const files = fs.readdirSync('./files')
+console.log('files: ', files);
+
+// Iterate through each files
 
 const run = async _ => {
+
+    for (let i = 0; i < files.length; ++i) {
+        console.log(files[i])
+    }
     const fileName = './files/CMA CGM LITANI 4525 - AVAILABLE.xlsm'
     const wb = xlsx.readFile(fileName, { cellDates: true })
     const wsName = wb.SheetNames[0]
@@ -68,4 +78,4 @@ const run = async _ => {
 
 }
 
-run()
+// run()
