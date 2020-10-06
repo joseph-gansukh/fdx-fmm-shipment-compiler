@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const files = fs.readdirSync('./files')
 
-// ENCODING
+// ENCODING FOR DELETING ROWS
 const ec = (r, c) => {
     return xlsx.utils.encode_cell({ r: r, c: c })
 }
